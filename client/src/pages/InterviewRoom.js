@@ -198,7 +198,7 @@ export default function InterviewRoom() {
         {/* AI side */}
         <div className="ai-area">
           <img
-            src="https://via.placeholder.com/480x360?text=AI+Interviewer"
+            src="/AI-interview.png"
             alt="AI Interviewer"
             className="ai-avatar"
           />

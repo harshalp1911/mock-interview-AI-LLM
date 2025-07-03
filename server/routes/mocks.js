@@ -1,12 +1,13 @@
 // server/routes/mocks.js
 const express = require('express');
 const router  = express.Router();
+const authenticateToken = require('../middleware/auth');
 const Mock    = require('../models/mock');
 
 // POST /api/mocks
 // Body: { questions: [ "Q1", "Q2", ... ] }
 //    or  { questions: [ { text: "Q1", order: 0 }, ... ] }
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { questions } = req.body;
     if (!Array.isArray(questions) || questions.length === 0) {

@@ -1,3 +1,4 @@
+//src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,6 +32,7 @@ const Dashboard = () => {
     <div>
       <h1>Welcome, {user.name} 👋</h1>
       <p>Email: {user.email}</p>
+      <p> Feature not yet Implemented...</p>
     </div>
   );
 };

@@ -1,77 +1,120 @@
 import React, { useState } from 'react';
-import { useNavigate }      from 'react-router-dom';
-import axios                from 'axios';
-import '../App.css';
+import { useNavigate } from 'react-router-dom';
+import './NewMock.css'; // Import custom styles
 
-export default function CreateMock() {
+const NewMock = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
   const [questions, setQuestions] = useState(['']);
-  const [loading, setLoading]     = useState(false);
-  const navigate                  = useNavigate();
 
-  const updateQuestion = (idx, text) => {
-    const qs = [...questions];
-    qs[idx] = text;
-    setQuestions(qs);
+  const requireLogin = () => {
+    alert('Please log in before creating mocks.');
+    navigate('/new');
   };
 
-  const addQuestion = () => setQuestions([...questions, '']);
-
-  const removeQuestion = idx => {
-    const qs = questions.filter((_, i) => i !== idx);
-    setQuestions(qs);
+  const handleAddQuestion = () => {
+    if (!token) return requireLogin();
+    setQuestions(qs => [...qs, '']);
   };
 
-  const submitQuestions = async () => {
-    if (!questions.every(q => q.trim())) return;
-    setLoading(true);
+  const handleRemoveQuestion = (index) => {
+    if (!token) return requireLogin();
+    setQuestions(qs => qs.filter((_, i) => i !== index));
+  };
+
+  const handleQuestionChange = (index, value) => {
+    const copy = [...questions];
+    copy[index] = value;
+    setQuestions(copy);
+  };
+
+  const handleSubmit = async () => {
+    if (!token) return requireLogin();
+
     try {
-      const res = await axios.post('http://localhost:5001/api/mocks', {
-        questions: questions.map((t, i) => ({ text: t, order: i }))
+      const res = await fetch('http://localhost:5001/api/mocks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ questions })
       });
-      navigate(`/review/${res.data.mockId}`);
+
+      const data = await res.json();
+      if (!res.ok) {
+        return alert(data.msg || 'Failed to create mock');
+      }
+
+      navigate(`/review/${data.mockId}`);
     } catch (err) {
       console.error(err);
-      alert('Submission failed.');
-    } finally {
-      setLoading(false);
+      alert('Network error — please try again.');
     }
   };
 
   return (
-    <div className="create-mock">
-      <h2>Create Mock Interview</h2>
-      <div className="question-list">
-        {questions.map((q, i) => (
-          <div className="question-item" key={i}>
-            <input
-              type="text"
-              placeholder={`Question ${i + 1}`}
-              value={q}
-              onChange={e => updateQuestion(i, e.target.value)}
-            />
-            <button
-              className="remove-btn"
-              onClick={() => removeQuestion(i)}
-              disabled={questions.length === 1}
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+    <div className="mock-container">
+      <div className="left-panel">
+        <h3> Start your interview Practice </h3>
+        <ul>
+            <li> Create your own ques.</li>
+            <li> Submit the ques and start your interview room</li>
+        </ul>
+        <h3>🧠 Interview Tips</h3>
+        <ul>
+          <li>Include both technical and behavioral questions.</li>
+          <li>Start with “Tell me about yourself.”</li>
+          <li>Ask open-ended questions to simulate real interviews.</li>
+        </ul>
+
+        <h4>💡 Sample Questions</h4>
+        <ul>
+          <li>What are your strengths and weaknesses?</li>
+          <li>Explain closures in JavaScript.</li>
+          <li>How would you design a scalable system?</li>
+        </ul>
+
+        <a href="https://github.com/harshalp1911/mock-interview-AI-LLM" target ="_blank">Visit for Documentation</a>
+        
+        <ul> 
+            <h3>Meet Developers</h3>
+          <li><a href="https://github.com/harshalp1911" target ="_blank">Harshal Patil</a></li>
+          <li><a href="https://github.com/turbo7slug" target ="_blank"> Mohd Yusuf Hesam</a></li>
+          <li><a href="https://github.com/Im-Alam" target ="_blank">Imran Alam</a></li>
+          <li><a href="https://github.com/rishi-0205" target ="_blank">Rishi Srivastava</a></li>
+        </ul>
       </div>
 
-      <div className="actions">
-        <button className="add-btn" onClick={addQuestion}>
-          Add Question
-        </button>
-        <button
-          className="submit-btn"
-          onClick={submitQuestions}
-          disabled={loading || !questions.every(q => q.trim())}
-        >
-          {loading ? 'Submitting…' : 'Submit Questions'}
-        </button>
+      <div className="right-panel">
+        <h2>Create Mock Interview</h2>
+        <div className="question-list">
+          {questions.map((q, i) => (
+            <div key={i} className="question-item">
+              <input
+                type="text"
+                value={q}
+                placeholder={`Question ${i + 1}`}
+                onChange={e => handleQuestionChange(i, e.target.value)}
+              />
+              <button className="remove-btn" onClick={() => handleRemoveQuestion(i)}>
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="actions">
+          <button className="add-btn" onClick={handleAddQuestion}>
+            Add Question
+          </button>
+          <button className="submit-btn" onClick={handleSubmit} disabled={!token}>
+            Submit Questions
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default NewMock;

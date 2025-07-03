@@ -1,3 +1,5 @@
+// src/pages/OAuthSucess.jsx
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +15,7 @@ const OAuthSuccess = () => {
       localStorage.setItem("token", token);
       // ✅ Delay the redirect to ensure state settles
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/new");
       }, 100);
     } else {
       // ✅ Don't redirect unless token was never saved
