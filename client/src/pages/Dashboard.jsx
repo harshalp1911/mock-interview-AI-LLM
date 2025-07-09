@@ -32,7 +32,14 @@ const Dashboard = () => {
     <div>
       <h1>Welcome, {user.name} 👋</h1>
       <p>Email: {user.email}</p>
-      <p> Feature not yet Implemented...</p>
+      <p> Feature not yet Implemented...
+        <table> Approach Break Down
+            <tr> 👉 Store all user responses and corresponding interview questions during the session.</tr>
+            <tr>👉 Send each Q&A pair to an AI model to evaluate the quality of the answer.</tr>
+            <tr>👉  Generate a score and feedback for each question, then calculate an overall interview score.</tr>
+            <tr>👉  Display a summary with questions, user answers, individual scores, and final feedback.</tr>
+        </table>
+      </p>
     </div>
   );
 };
